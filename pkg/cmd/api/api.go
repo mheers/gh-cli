@@ -17,6 +17,7 @@ import (
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/cli/cli/v2/api"
+	"github.com/cli/cli/v2/authheader"
 	"github.com/cli/cli/v2/internal/gh"
 	"github.com/cli/cli/v2/internal/ghinstance"
 	"github.com/cli/cli/v2/internal/ghrepo"
@@ -389,6 +390,7 @@ func apiRun(opts *ApiOptions) error {
 	if err != nil {
 		return err
 	}
+	httpClient.Transport = authheader.Transport(httpClient.Transport)
 
 	host, _ := cfg.Authentication().DefaultHost()
 

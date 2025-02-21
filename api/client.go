@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/cli/cli/v2/authheader"
 	ghAPI "github.com/cli/go-gh/v2/pkg/api"
 	ghauth "github.com/cli/go-gh/v2/pkg/auth"
 )
@@ -26,6 +27,7 @@ const (
 var linkRE = regexp.MustCompile(`<([^>]+)>;\s*rel="([^"]+)"`)
 
 func NewClientFromHTTP(httpClient *http.Client) *Client {
+	httpClient.Transport = authheader.Transport(httpClient.Transport)
 	client := &Client{http: httpClient}
 	return client
 }

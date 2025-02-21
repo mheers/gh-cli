@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cli/cli/v2/authheader"
 	"github.com/cli/cli/v2/utils"
 	ghAPI "github.com/cli/go-gh/v2/pkg/api"
 	ghauth "github.com/cli/go-gh/v2/pkg/auth"
@@ -49,6 +50,7 @@ func NewHTTPClient(opts HTTPClientOptions) (*http.Client, error) {
 	headers := map[string]string{
 		userAgent: fmt.Sprintf("GitHub CLI %s", opts.AppVersion),
 	}
+	headers = authheader.ExtendHeaders(headers)
 	clientOpts.Headers = headers
 
 	if opts.EnableCache {
@@ -70,7 +72,7 @@ func NewHTTPClient(opts HTTPClientOptions) (*http.Client, error) {
 
 func NewCachedHTTPClient(httpClient *http.Client, ttl time.Duration) *http.Client {
 	newClient := *httpClient
-	newClient.Transport = AddCacheTTLHeader(httpClient.Transport, ttl)
+	newClient.Transport = AddCacheTTLHeader(newClient.Transport, ttl)
 	return &newClient
 }
 

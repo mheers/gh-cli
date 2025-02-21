@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/MakeNowJust/heredoc"
+	"github.com/cli/cli/v2/authheader"
 	"github.com/cli/cli/v2/git"
 	"github.com/cli/cli/v2/internal/browser"
 	"github.com/cli/cli/v2/internal/gh"
@@ -188,6 +189,8 @@ func loginRun(opts *LoginOptions) error {
 	if err != nil {
 		return err
 	}
+
+	httpClient.Transport = authheader.Transport(httpClient.Transport)
 
 	if opts.Token != "" {
 		if err := shared.HasMinimumScopes(httpClient, hostname, opts.Token); err != nil {

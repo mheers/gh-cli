@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/MakeNowJust/heredoc"
+	"github.com/cli/cli/v2/authheader"
 	"github.com/cli/cli/v2/git"
 	"github.com/cli/cli/v2/internal/authflow"
 	"github.com/cli/cli/v2/internal/gh"
@@ -40,6 +41,9 @@ type RefreshOptions struct {
 }
 
 func NewCmdRefresh(f *cmdutil.Factory, runF func(*RefreshOptions) error) *cobra.Command {
+	httpClient := &http.Client{}
+	httpClient.Transport = authheader.Transport(httpClient.Transport)
+
 	opts := &RefreshOptions{
 		IO:     f.IOStreams,
 		Config: f.Config,
@@ -47,7 +51,7 @@ func NewCmdRefresh(f *cmdutil.Factory, runF func(*RefreshOptions) error) *cobra.
 			t, u, err := authflow.AuthFlow(hostname, io, "", scopes, interactive, f.Browser)
 			return token(t), username(u), err
 		},
-		HttpClient: &http.Client{},
+		HttpClient: httpClient,
 		GitClient:  f.GitClient,
 		Prompter:   f.Prompter,
 	}

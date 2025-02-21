@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/cli/cli/v2/api"
+	"github.com/cli/cli/v2/authheader"
 	"github.com/cli/cli/v2/internal/browser"
 	"github.com/cli/cli/v2/internal/ghinstance"
 	"github.com/cli/cli/v2/pkg/iostreams"
@@ -34,6 +35,9 @@ func AuthFlow(oauthHost string, IO *iostreams.IOStreams, notice string, addition
 	cs := IO.ColorScheme()
 
 	httpClient := &http.Client{}
+
+	httpClient.Transport = authheader.Transport(httpClient.Transport)
+
 	debugEnabled, debugValue := utils.IsDebugEnabled()
 	if debugEnabled {
 		logTraffic := strings.Contains(debugValue, "api")
